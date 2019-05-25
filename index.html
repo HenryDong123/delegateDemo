@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<ul id="aaa">
+    <li id="bbb"><span>点我</span></li>
+</ul>
+<script>
+    // 这种事件委托其实是有问题的，如果我点span其是不生效的，而我们肯定要的不是这种效果
+    document.getElementById('aaa').addEventListener('click',function (e) {
+        if (e.target.tagName.toLowerCase() === 'li'){
+            console.log(q)
+        }
+
+    })
+    // 这种是优化过后的，点击在span上后，递归遍历了span的上层元素，检查里面是否有ul里的li
+    let ul = document.getElementById('aaa')
+    delegate(ul,'click', 'li' ,function () { console.log(this); })
+    function delegate(element,eventType,selector,fn) {
+        element.addEventListener(eventType, e => {
+            let el = e.target
+            while (!el.matches(selector)){
+                if( el === element){
+                    el = null
+                    break
+                }
+                el = el.parentNode
+            }
+            el && fn.call(el, e, el)
+        })
+        return element
+    }
+</script>
+</body>
+</html>
